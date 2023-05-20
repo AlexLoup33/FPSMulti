@@ -1,0 +1,139 @@
+[gd_scene load_steps=9 format=3 uid="uid://d1omwfpkua06u"]
+
+[ext_resource type="PackedScene" uid="uid://bvb3qg2hxr8jw" path="res://scene/Environment.tscn" id="1_bbob4"]
+[ext_resource type="Script" path="res://Script/World.gd" id="1_butxs"]
+[ext_resource type="Texture2D" uid="uid://bfeuvn0cmrt6g" path="res://addons/kenney_particle_pack/circle_05.png" id="3_v51b2"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_w8cqj"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_qqeqr"]
+sky_material = SubResource("ProceduralSkyMaterial_w8cqj")
+
+[sub_resource type="Environment" id="Environment_54lrw"]
+background_mode = 2
+sky = SubResource("Sky_qqeqr")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ly4k4"]
+bg_color = Color(0.780392, 0.0313726, 0.14902, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8juc0"]
+bg_color = Color(0.364706, 0.686275, 0.376471, 1)
+
+[node name="World" type="Node"]
+script = ExtResource("1_butxs")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_54lrw")
+
+[node name="Node3D" parent="." instance=ExtResource("1_bbob4")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Node3D"]
+
+[node name="MainMenu" type="PanelContainer" parent="Node3D/CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 351.0
+offset_top = 227.0
+offset_right = -351.0
+offset_bottom = -227.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Node3D/CanvasLayer/MainMenu"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Node3D/CanvasLayer/MainMenu/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="Node3D/CanvasLayer/MainMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Main Menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HostButton" type="Button" parent="Node3D/CanvasLayer/MainMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Host"
+
+[node name="JoinButton" type="Button" parent="Node3D/CanvasLayer/MainMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Join"
+
+[node name="AdressEntry" type="LineEdit" parent="Node3D/CanvasLayer/MainMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Enter Address to join here"
+alignment = 1
+
+[node name="HUD" type="Control" parent="Node3D/CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="Node3D/CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.03, 0.03)
+pivot_offset = Vector2(576, 324)
+texture = ExtResource("3_v51b2")
+stretch_mode = 5
+
+[node name="HealthBar" type="ProgressBar" parent="Node3D/CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 330.0
+offset_top = 36.0
+offset_right = -330.0
+offset_bottom = -556.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_ly4k4")
+theme_override_styles/fill = SubResource("StyleBoxFlat_8juc0")
+max_value = 5.0
+value = 5.0
+
+[node name="Score" type="Label" parent="Node3D/CanvasLayer/HUD"]
+layout_mode = 0
+offset_right = 103.0
+offset_bottom = 42.0
+text = "Score :"
+vertical_alignment = 1
+
+[node name="SValue" type="Label" parent="Node3D/CanvasLayer/HUD"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 42.0
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://scene/player.tscn")
+spawn_path = NodePath("..")
+
+[connection signal="pressed" from="Node3D/CanvasLayer/MainMenu/MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="Node3D/CanvasLayer/MainMenu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
+[connection signal="spawned" from="MultiplayerSpawner" to="." method="_on_multiplayer_spawner_spawned"]
